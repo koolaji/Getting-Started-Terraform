@@ -4,14 +4,7 @@ git clone https://github.com/koolaji/Getting-Started-Terraform.git
 wget https://releases.hashicorp.com/terraform/1.12.2/terraform_1.12.2_linux_amd64.zip
 unzip terraform_1.12.2_linux_amd64.zip
 mv terraform /usr/bin/
-sudo yum groups install -y Development\ tools
-sudo yum install -y cmake
-sudo yum install -y python34-{devel,pip}
-sudo pip-3.4 install neovim --upgrade
-(
-cd "$(mktemp -d)"
-git clone https://github.com/neovim/neovim.git
-cd neovim
-make CMAKE_BUILD_TYPE=Release
-sudo make install
-)
+wget https://github.com/neovim/neovim/releases/download/v0.11.3/nvim-linux-x86_64.appimage 
+mv nvim-linux-x86_64.appimage nvim
+chmod +x nvim
+mv nvim /usr/bin
