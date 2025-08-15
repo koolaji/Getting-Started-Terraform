@@ -36,7 +36,7 @@ resource "aws_subnet" "public_subnet1" {
   cidr_block              = var.aws_vpc_subnet
   vpc_id                  = aws_vpc.app.id
   map_public_ip_on_launch = var.aws_map_public_ip_on_launch
-  availability_zone       = var.aws_region
+  availability_zone       = "us-east-1a"
   tags = local.common_tags
 }
 
