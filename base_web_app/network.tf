@@ -32,7 +32,7 @@ resource "aws_internet_gateway" "app" {
 }
 
 resource "aws_subnet" "public_subnet1" {
-  cidr_block              = var.aws_vpc_subnet[0]
+  cidr_block              = var.aws_vpc_subnets[0]
   vpc_id                  = aws_vpc.app.id
   map_public_ip_on_launch = var.aws_map_public_ip_on_launch
   availability_zone       = data.aws_availability_zones.available.names[0]
@@ -40,7 +40,7 @@ resource "aws_subnet" "public_subnet1" {
 }
 
 resource "aws_subnet" "public_subnet2" {
-  cidr_block              = var.aws_vpc_subnet[1]
+  cidr_block              = var.aws_vpc_subnets[1]
   vpc_id                  = aws_vpc.app.id
   map_public_ip_on_launch = var.aws_map_public_ip_on_launch
   availability_zone       = data.aws_availability_zones.available.names[1]

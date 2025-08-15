@@ -1,16 +1,16 @@
 resource "aws_lb" "nginx" {
-    name = "globo_web_alb"
+    name = "globo-web-alb"
     internal = false
     load_balancer_type = "application"
     security_groups = [aws_security_group.alb_sg.id]
-    subnets = [aws_subnet.public_subnet1.id,aws_route_table_association.app_subnet2.id]
+    subnets = [aws_subnet.public_subnet1.id,aws_subnet.public_subnet2.id]
     enable_deletion_protection = true
     tags = local.common_tags
 }
 
 
 resource "aws_lb_target_group" "nginx" {
-    name = "globo_web_alb_tg"
+    name = "globo-web-alb-tg"
     port = 80
     protocol = "HTTP"
     vpc_id = aws_vpc.app.id
@@ -35,8 +35,7 @@ resource "aws_lb_target_group_attachment" "nginx1" {
 }
 
 resource "aws_lb_target_group_attachment" "nginx2" {
-    target_group_arn = aws_instance.nginx2
+    target_group_arn = aws_lb_target_group.nginx.arn
     target_id        = aws_instance.nginx2.id
     port             = 80
-  
 }
