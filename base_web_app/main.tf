@@ -3,9 +3,9 @@
 ##################################################################################
 
 provider "aws" {
-  access_key = "ACCESS_KEY"
-  secret_key = "SECRET_KEY"
-  region     = "us-east-1"
+  access_key = var.aws_access_key
+  secret_key = var.aws_secret_key
+  region     = var.aws_region
 }
 
 ##################################################################################
@@ -22,19 +22,22 @@ data "aws_ssm_parameter" "amzn2_linux" {
 
 # NETWORKING #
 resource "aws_vpc" "app" {
-  cidr_block           = "10.0.0.0/16"
-  enable_dns_hostnames = true
+  cidr_block           = var.aws_cidr_block
+  enable_dns_hostnames = var.enable_dns_hostnames
+  tags = local.common_tags
 }
 
 resource "aws_internet_gateway" "app" {
   vpc_id = aws_vpc.app.id
+  tags = local.common_tags
 }
 
 resource "aws_subnet" "public_subnet1" {
-  cidr_block              = "10.0.0.0/24"
+  cidr_block              = var.aws_vpc_subnet
   vpc_id                  = aws_vpc.app.id
-  map_public_ip_on_launch = true
-  availability_zone       = "us-east-1a"  # Specify an availability zone for more reliable deployment
+  map_public_ip_on_launch = var.aws_map_public_ip_on_launch
+  availability_zone       = var.aws_region
+  tags = local.common_tags
 }
 
 # ROUTING #
@@ -57,7 +60,7 @@ resource "aws_route_table_association" "app_subnet1" {
 resource "aws_security_group" "nginx_sg" {
   name   = "nginx_sg"
   vpc_id = aws_vpc.app.id
-
+  tags = local.common_tags
   # HTTP access from anywhere
   ingress {
     from_port   = 80
@@ -86,10 +89,10 @@ resource "aws_security_group" "nginx_sg" {
 # INSTANCES #
 resource "aws_instance" "nginx1" {
   ami                    = nonsensitive(data.aws_ssm_parameter.amzn2_linux.value)
-  instance_type          = "t3.micro"
+  instance_type          = var.aws_instance_type
   subnet_id              = aws_subnet.public_subnet1.id
   vpc_security_group_ids = [aws_security_group.nginx_sg.id]
-  key_name               = "test"  # Make sure you have this key pair in your AWS account
+  # key_name               = "test"  # Make sure you have this key pair in your AWS account
 
   user_data = <<EOF
 #!/bin/bash
@@ -122,11 +125,3 @@ EOF
   }
 }
 
-# Output the public IP and DNS for easy access
-output "instance_ip" {
-  value = aws_instance.nginx1.public_ip
-}
-
-output "instance_dns" {
-  value = aws_instance.nginx1.public_dns
-}
