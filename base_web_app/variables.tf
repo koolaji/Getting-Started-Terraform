@@ -26,10 +26,10 @@ variable "aws_cidr_block" {
     default = "10.0.0.0/16"
 }
 
-variable "aws_vpc_subnet" {
-    type = string
+variable "aws_vpc_subnets" {
+    type = list(string)
     description = "AWS VPC Subnet"
-    default = "10.0.0.0/24"
+    default = ["10.0.0.0/24", "10.0.1.0/24"]
 }
 
 variable "aws_map_public_ip_on_launch" {
